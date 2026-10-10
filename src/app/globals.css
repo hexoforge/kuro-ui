@@ -1,26 +1,120 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Design units.
+ * The Figma frame is 1920px wide. On desktop one spacing unit = one Figma px, scaled to the
+ * viewport (capped at 1920), so `w-871` renders exactly 871px at 1920 and stays proportional
+ * below it. Under the lg breakpoint a unit is a plain 1px and sections switch to stacked layouts.
+ * `body` is the only size container, so 100cqw excludes the scrollbar.
+ */
+@theme {
+  --spacing: 1px;
+
+  --color-ink: #000000;
+  --color-surface: #121212;
+  --color-row: #0e0e0e;
+  --color-row-alt: #141414;
+  --color-chip: #27272a;
+  --color-chip-2: #34343a;
+  --color-arrow: #222226;
+  --color-line: #818181;
+  --color-lime: #c9ff04;
+  --color-muted: #5b5b5b;
+  --color-chevron: #9f9fa9;
+  --color-gold: #eebf17;
+  --color-placeholder: #d9d9d9;
+
+  --font-sora: var(--ff-sora), system-ui, sans-serif;
+  --font-manrope: var(--ff-manrope), system-ui, sans-serif;
+  --font-inter: var(--ff-inter), system-ui, sans-serif;
+  --font-outfit: var(--ff-outfit), system-ui, sans-serif;
+  --font-sedgwick: var(--ff-sedgwick), cursive;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@media (width >= 64rem) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --spacing: calc(min(100cqw, 1920px) / 1920);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Font size in design units, never smaller than 80% of the Figma size. */
+@utility fs-* {
+  font-size: max(calc(--value(integer) * var(--spacing)), calc(--value(integer) * 0.8px));
+}
+
+/* Border radius in design units. */
+@utility r-* {
+  border-radius: calc(--value(integer) * var(--spacing));
+}
+
+@layer base {
+  html {
+    background: var(--color-ink);
+    color-scheme: dark;
+  }
+
+  body {
+    container-type: inline-size;
+    background: var(--color-ink);
+    color: #fff;
+    font-family: var(--font-sora);
+    /* Figma text uses "normal" line height everywhere. */
+    line-height: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-lime);
+    color: #000;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-lime);
+    outline-offset: 2px;
+  }
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes pager-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Play Now: 1px lime → transparent → lime diagonal stroke over a translucent fill. */
+@utility gradient-ring {
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(to bottom right, #c9ff04, rgb(201 255 4 / 0) 50%, #c9ff04);
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
 }
