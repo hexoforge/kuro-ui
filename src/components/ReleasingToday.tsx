@@ -14,7 +14,6 @@ import ccChipSm from "@/assets/icons/release-chip-group132.svg";
 import apothecaryBg from "@/assets/img/release-apothecary-bg.png";
 import apothecaryPoster from "@/assets/img/top-apothecary.png";
 import fireflyPoster from "@/assets/img/release-firefly-poster.png";
-import tokyoBg from "@/assets/img/release-tokyorev-bg.png";
 import tokyoPoster from "@/assets/img/release-tokyorev-poster.png";
 
 type Release = {
@@ -25,8 +24,10 @@ type Release = {
   subs: number;
   score: string;
   poster: StaticImageData;
-  /** Large cards sit on a blurred backdrop; the compact middle card is a plain panel. */
+  /** Large cards sit on a blurred backdrop; compact cards are plain panels. */
   bg?: StaticImageData;
+  /** Figma crops Firefly Wedding's poster to a zoomed detail instead of a plain cover fit. */
+  zoomCrop?: boolean;
 };
 
 const RELEASES: Release[] = [
@@ -50,6 +51,7 @@ const RELEASES: Release[] = [
     subs: 10,
     score: "87%",
     poster: fireflyPoster,
+    zoomCrop: true,
   },
   {
     title: "Tokyo Revengers: War of Three Titans Arc",
@@ -59,7 +61,6 @@ const RELEASES: Release[] = [
     subs: 10,
     score: "87%",
     poster: tokyoPoster,
-    bg: tokyoBg,
   },
 ];
 
@@ -129,14 +130,18 @@ function CompactCard({ r }: { r: Release }) {
   return (
     <a href="#" className="group mx-20 flex h-182 r-20 bg-surface p-20 transition-colors hover:bg-[#181818] max-lg:mx-0 max-lg:h-auto max-lg:rounded-[16px] max-lg:p-14">
       <div className="relative h-142 w-112 shrink-0 overflow-hidden rounded-[calc(10*var(--spacing))] max-lg:w-104 max-lg:rounded-[10px]">
-        {/* Figma crops this poster to a zoomed detail: 208% × 230% of the frame, shifted up 81%. */}
-        <Image
-          src={r.poster}
-          alt=""
-          placeholder="blur"
-          sizes={designSizes(233, "216px")}
-          className="absolute left-[0.18%] top-[-81%] h-[230.15%] w-[207.95%] max-w-none"
-        />
+        {r.zoomCrop ? (
+          // 208% × 230% of the frame, shifted up 81% — the exact Figma crop.
+          <Image
+            src={r.poster}
+            alt=""
+            placeholder="blur"
+            sizes={designSizes(233, "216px")}
+            className="absolute left-[0.18%] top-[-81%] h-[230.15%] w-[207.95%] max-w-none"
+          />
+        ) : (
+          <Image src={r.poster} alt="" fill placeholder="blur" sizes={designSizes(112, "104px")} className="object-cover" />
+        )}
       </div>
 
       <div className="ml-9 flex min-w-0 flex-1 flex-col">
@@ -155,7 +160,7 @@ function CompactCard({ r }: { r: Release }) {
         </div>
 
         <div className="mt-auto">
-          <h3 className="truncate fs-18 font-bold leading-[1.26] max-lg:text-[16px]">{r.title}</h3>
+          <h3 className="line-clamp-2 fs-18 font-bold leading-[1.26] max-lg:text-[16px]">{r.title}</h3>
           <p className="mt-4 line-clamp-3 font-outfit fs-9 leading-[1.3] max-lg:line-clamp-2">{r.synopsis}</p>
           <div className="mt-10 flex flex-wrap items-center gap-5 font-inter font-bold">
             <span className={`${glass} h-21 w-67 justify-center rounded-full`}>
@@ -192,18 +197,17 @@ export function ReleasingHeader() {
 }
 
 export default function ReleasingToday() {
-  const [first, middle, last] = RELEASES;
+  const [first, ...rest] = RELEASES;
   return (
-    <ul className="flex h-673 flex-col max-lg:h-auto max-lg:gap-12">
+    <ul className="flex h-673 flex-col justify-between max-lg:h-auto max-lg:gap-12">
       <li>
         <LargeCard r={first} />
       </li>
-      <li className="mt-20 max-lg:mt-0">
-        <CompactCard r={middle} />
-      </li>
-      <li className="mt-auto max-lg:mt-0">
-        <LargeCard r={last} />
-      </li>
+      {rest.map((r) => (
+        <li key={r.title}>
+          <CompactCard r={r} />
+        </li>
+      ))}
     </ul>
   );
 }
