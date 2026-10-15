@@ -157,8 +157,9 @@ export default function Hero() {
           <div key={cut} aria-hidden className="hero-blade z-[4]" />
         )}
 
-        {/* Mobile only: the full-bleed art needs a scrim for legible copy. */}
-        <div className="absolute inset-0 z-[5] bg-linear-to-t from-black/85 via-black/20 to-transparent lg:hidden" />
+        {/* Same fade as the Details banner: clear at the top, solid black at the bottom, so the art sinks
+            into the page and the copy reads. Under the blade so the slash stays bright. */}
+        <div className="absolute inset-0 z-[3] bg-linear-to-b from-transparent to-black" />
       </div>
 
       {/* Copy is anchored to the bottom (Figma: buttons end 81 above the edge) so long titles grow upward. */}
