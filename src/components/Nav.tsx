@@ -57,32 +57,31 @@ export default function Nav({ crumb }: { crumb?: string }) {
               <Link href="/" aria-label="Home" aria-current="page" className={circle}>
                 <Image src={home} alt="" className="size-14" />
               </Link>
-              <a href="#releasing" aria-label="Releasing today" className={circle}>
+              <Link href="/#releasing" aria-label="Releasing today" className={circle}>
                 <Image src={calendar} alt="" className="h-14 w-16" />
-              </a>
+              </Link>
             </nav>
 
             <div role="group" aria-label="Content type" className="ml-20 flex items-center gap-8 max-lg:hidden">
-              <button
-                type="button"
-                aria-pressed="true"
+              <Link
+                href="/"
+                aria-current="page"
                 className="slash-hover flex h-30 w-87 items-center gap-5 rounded-full border border-lime bg-lime/20 pl-15 font-inter fs-13 font-bold tracking-[-0.02em] text-lime backdrop-blur-[5px]"
               >
                 <Image src={tv} alt="" className="size-12" />
                 Anime
-              </button>
+              </Link>
               <span aria-hidden className="relative h-30 w-15">
                 <Image src={swapA} alt="" className="absolute left-6 top-8 h-7.5 w-8.75" />
                 <Image src={swapB} alt="" className="absolute left-0 top-14 h-7.5 w-8.75" />
               </span>
-              <button
-                type="button"
-                aria-pressed="false"
+              <Link
+                href="/"
                 className="slash-hover flex h-30 w-91 items-center gap-5 rounded-full bg-surface pl-15 font-inter fs-13 font-bold tracking-[-0.02em] text-muted backdrop-blur-[5px] hover:text-white/70"
               >
                 <Image src={movies} alt="" className="h-12 w-11" />
                 Movies
-              </button>
+              </Link>
             </div>
           </>
         )}
@@ -91,43 +90,44 @@ export default function Nav({ crumb }: { crumb?: string }) {
       {/* Center search — absolutely centred on the frame like the design */}
       <form
         role="search"
-        action="#"
+        action="/"
         className="absolute left-1/2 top-0 flex h-38 w-462 -translate-x-1/2 items-center gap-10 max-lg:hidden"
       >
-        <button type="button" aria-label="Random anime" className={circle}>
+        <Link href="/" aria-label="Random anime" className={circle}>
           <Image src={shuffle} alt="" className="h-13 w-15" />
-        </button>
+        </Link>
         <label className="relative h-38 flex-1">
           <span className="sr-only">Search anime</span>
           <input
             type="search"
+            name="q"
             placeholder="Search"
             className="size-full rounded-full bg-surface px-20 text-center font-inter fs-13 font-semibold text-white outline-none placeholder:text-white/50 focus-visible:outline-2 focus-visible:outline-lime"
           />
         </label>
-        <button type="submit" aria-label="Search" className={circle}>
+        <Link href="/" aria-label="Search" className={circle}>
           <Image src={search} alt="" className="size-15" />
-        </button>
+        </Link>
       </form>
 
       {/* Right cluster */}
       <div className="flex items-center gap-5 max-lg:gap-8">
-        <button type="button" aria-label="Search" className={`${circleBase} size-44 lg:hidden`}>
+        <Link href="/" aria-label="Search" className={`${circleBase} size-44 lg:hidden`}>
           <Image src={search} alt="" className="size-16" />
-        </button>
-        <button type="button" aria-label="Notifications" className={`${circleBase} size-38 max-lg:size-44`}>
+        </Link>
+        <Link href="/" aria-label="Notifications" className={`${circleBase} size-38 max-lg:size-44`}>
           <Image src={bell} alt="" className="h-14 w-12" />
-        </button>
-        <button type="button" aria-label="Merch store" className={`${circleBase} size-40 max-lg:hidden`}>
+        </Link>
+        <Link href="/" aria-label="Merch store" className={`${circleBase} size-40 max-lg:hidden`}>
           <Image src={shop} alt="" className="h-14 w-15.5" />
-        </button>
-        <button
-          type="button"
+        </Link>
+        <Link
+          href="/"
           aria-label="Account"
           className="slash-hover grid size-40 shrink-0 place-items-center rounded-full bg-lime/10 hover:bg-lime/20 max-lg:size-44"
         >
           <Image src={avatar} alt="" className="size-16" />
-        </button>
+        </Link>
       </div>
     </header>
   );
