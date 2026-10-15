@@ -8,6 +8,10 @@ import chainsaw from "@/assets/img/hero-chainsaw-man.jpg";
 import apothecary from "@/assets/img/release-apothecary-bg.png";
 import blackClover from "@/assets/img/hero-black-clover.png";
 import blackCloverMovie from "@/assets/img/hero-black-clover-movie.png";
+import laidOffMage from "@/assets/img/hero-laid-off-mage.webp";
+import blackCloverS2 from "@/assets/img/hero-black-clover-s2.webp";
+import onePiece from "@/assets/img/hero-one-piece.webp";
+import strongestWitch from "@/assets/img/hero-worlds-strongest-witch.webp";
 import play from "@/assets/icons/icon-play.svg";
 import info from "@/assets/icons/icon-info.svg";
 import plus from "@/assets/icons/hero-plus-btn.svg";
@@ -19,7 +23,8 @@ type Slide = {
   title: string;
   synopsis: string;
   runtime: string;
-  episodes: number;
+  /** A count, or text for open-ended series ("1100+"). */
+  episodes: number | string;
   score: string;
   img: StaticImageData;
   alt: string;
@@ -80,6 +85,55 @@ const SLIDES: Slide[] = [
     position: "50% 35%",
     mobilePosition: "55% 50%",
     href: "/anime/black-clover",
+  },
+  {
+    title: "The Laid-Off Cheat-Granting Mage Enjoys a Second Lease on Life",
+    synopsis:
+      "Rein, an enchanter, is suddenly expelled from his guild one day. But instead of despairing, he declares, “Now I can do anything!” and begins reclaiming the massive number of enhancement points he once poured into his guildmates’ gear, setting off on a...",
+    runtime: "24 mins",
+    episodes: 2,
+    score: "73%",
+    img: laidOffMage,
+    alt: "The Laid-Off Cheat-Granting Mage: Rein and his party, flanked by two giant stone faces",
+    position: "50% 25%",
+    mobilePosition: "55% 40%",
+  },
+  {
+    title: "Black Clover Season 2",
+    synopsis:
+      "With the Spade Kingdom's invasion behind them, Asta and the Black Bulls face a far greater threat: Lucius Zogratis and his Paladins. Asta pushes his devil-powered Anti-Magic further than ever as he and Yuno race toward their shared dream of becoming the Wizard King...",
+    runtime: "24 mins",
+    episodes: 1,
+    score: "82%",
+    img: blackCloverS2,
+    alt: "Black Clover Season 2: Asta in his devil form between Yami and Lucius Zogratis",
+    position: "50% 40%",
+    mobilePosition: "45% 50%",
+    href: "/anime/black-clover",
+  },
+  {
+    title: "ONE PIECE",
+    synopsis:
+      "Monkey D. Luffy sets out to sea with one goal: find the legendary treasure known as the One Piece and become King of the Pirates. Gathering a crew of misfits along the way, he sails the Grand Line in search of adventure, freedom and the greatest treasure in the world...",
+    runtime: "24 mins",
+    episodes: "1100+",
+    score: "88%",
+    img: onePiece,
+    alt: "ONE PIECE: Luffy saluting among framed scenes of the Straw Hat crew over an old sea chart",
+    position: "50% 50%",
+    mobilePosition: "72% 50%",
+  },
+  {
+    title: "The World's Strongest Witch",
+    synopsis:
+      "Having used her SSS-rank skill, Internet, to shut down her former family's schemes, Lorna is finally free to see the world. She heads for the port town of Aquas hoping for sightseeing and fresh seafood, only to find it on the verge of ruin thanks to a Weekly Quest. Luckily for Lorna, the gods are on her side...",
+    runtime: "24 mins",
+    episodes: 2,
+    score: "68%",
+    img: strongestWitch,
+    alt: "The World's Strongest Witch: Lorna swinging her staff among game-style windows showing her companions",
+    position: "50% 35%",
+    mobilePosition: "68% 40%",
   },
 ];
 
