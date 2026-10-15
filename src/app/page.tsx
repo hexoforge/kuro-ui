@@ -4,6 +4,7 @@ import ContinueWatching from "@/components/ContinueWatching";
 import Trending from "@/components/Trending";
 import TopPicks from "@/components/TopPicks";
 import Coverflow from "@/components/Coverflow";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <Trending />
       <TopPicks />
       <Coverflow />
+      <Footer />
     </main>
   );
 }
