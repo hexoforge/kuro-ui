@@ -2,7 +2,6 @@ import Image, { type StaticImageData } from "next/image";
 import { designSizes } from "@/lib/sizes";
 import ReleasingToday, { ReleasingHeader } from "@/components/ReleasingToday";
 import playBar from "@/assets/icons/icon-cw-play-bar.svg";
-import heading from "@/assets/icons/title-continue-watching.svg";
 import rezero from "@/assets/img/cw-rezero.png";
 import eminence from "@/assets/img/cw-eminence.png";
 import bleach from "@/assets/img/cw-bleach.png";
@@ -52,10 +51,9 @@ export default function ContinueWatching() {
   return (
     <div className="mt-70 flex gap-30 max-lg:mt-48 max-lg:flex-col max-lg:gap-48">
       <section aria-labelledby="cw-heading" className="w-1314 shrink-0 max-lg:w-full">
-        <h2 id="cw-heading" className="flex h-30 items-start gap-26 pl-3 max-lg:items-center max-lg:gap-12 max-lg:pl-0">
-          <Image src={playBar} alt="" className="mt-1 h-28 w-32 max-lg:mt-0 max-lg:h-22 max-lg:w-25" />
-          <Image src={heading} alt="" className="mt-4 h-27 w-255 max-lg:mt-0 max-lg:h-21 max-lg:w-198" />
-          <span className="sr-only">Continue Watching</span>
+        <h2 id="cw-heading" className="flex h-30 items-center gap-20 pl-4 fs-20 font-bold max-lg:gap-12 max-lg:pl-0 max-lg:text-[18px]">
+          <Image src={playBar} alt="" className="h-26 w-30 max-lg:h-20 max-lg:w-23" />
+          Continue Watching
         </h2>
 
         <div className="mt-32 flex h-673 gap-12 max-lg:mt-20 max-lg:h-auto max-lg:flex-col">

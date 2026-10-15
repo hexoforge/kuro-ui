@@ -128,7 +128,7 @@ function LargeCard({ r }: { r: Release }) {
 
 function CompactCard({ r }: { r: Release }) {
   return (
-    <a href="#" className="group mx-20 flex h-182 r-20 bg-surface p-20 transition-colors hover:bg-[#181818] max-lg:mx-0 max-lg:h-auto max-lg:rounded-[16px] max-lg:p-14">
+    <a href="#" className="group flex h-182 r-20 bg-surface p-20 transition-colors hover:bg-[#181818] max-lg:h-auto max-lg:rounded-[16px] max-lg:p-14">
       <div className="relative h-142 w-112 shrink-0 overflow-hidden rounded-[calc(10*var(--spacing))] max-lg:w-104 max-lg:rounded-[10px]">
         {r.zoomCrop ? (
           // 208% × 230% of the frame, shifted up 81% — the exact Figma crop.
@@ -199,7 +199,7 @@ export function ReleasingHeader() {
 export default function ReleasingToday() {
   const [first, ...rest] = RELEASES;
   return (
-    <ul className="flex h-673 flex-col justify-between max-lg:h-auto max-lg:gap-12">
+    <ul className="flex flex-col gap-20 max-lg:gap-12">
       <li>
         <LargeCard r={first} />
       </li>
