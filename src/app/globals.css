@@ -30,6 +30,10 @@
   --font-inter: var(--ff-inter), system-ui, sans-serif;
   --font-outfit: var(--ff-outfit), system-ui, sans-serif;
   --font-sedgwick: var(--ff-sedgwick), cursive;
+  --font-sedgwick-display: var(--ff-sedgwick-display), cursive;
+  --font-zihi: var(--ff-zihi), serif;
+  --font-instrument: var(--ff-instrument), serif;
+  --font-mono: var(--ff-mono), ui-monospace, monospace;
 }
 
 @media (width >= 64rem) {
@@ -84,12 +88,211 @@
   }
 }
 
+/*
+ * Nav hover: a lime/white slash scans across the control from top-left to bottom-right, echoing
+ * the hero's slash cut. The streak lives on an oversized ::after (2× the control) so a 135° band
+ * sweep corner to corner; overflow clips it to the control's own radius. It starts on the
+ * top-left corner and eases out, so it shows from the first frame of the hover. It replays on every hover because the animation is only attached
+ * while hovered/focused. The control also grows slightly for as long as it is hovered; this utility
+ * owns the transition (scale + colours) so it must not be combined with `transition-colors`.
+ */
+@utility slash-hover {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition-property: scale, color, background-color, border-color, opacity;
+  transition-duration: 400ms;
+  transition-timing-function: cubic-bezier(0.22, 0.8, 0.2, 1);
+  &:hover,
+  &:focus-visible {
+    scale: 1.06;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    background: linear-gradient(
+      135deg,
+      transparent 42%,
+      rgb(201 255 4 / 0.45) 47%,
+      rgb(255 255 255 / 0.95) 50%,
+      rgb(201 255 4 / 0.45) 53%,
+      transparent 58%
+    );
+    mix-blend-mode: screen;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-24%, -24%);
+  }
+  &:hover::after,
+  &:focus-visible::after {
+    animation: slash-scan 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+}
+
+/*
+ * The ::after is 2× the control, so its middle (where the streak sits) is the control's centre.
+ * The control's corners sit at ±25% of it, so -24% puts the streak already on the top-left corner
+ * at frame 0 (visible the instant the pointer arrives) and +26% lets it leave the bottom-right
+ * corner just as the 400 ms ends — the whole duration is spent on the control.
+ */
+@keyframes slash-scan {
+  from {
+    opacity: 1;
+    transform: translate(-24%, -24%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(26%, 26%);
+  }
+}
+
+/* Thin lime scrollbar for in-panel scrolling (episode lists). */
+@utility kuro-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(201 255 4 / 0.35) transparent;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgb(201 255 4 / 0.35);
+    border-radius: 999px;
+  }
+}
+
+@keyframes mlt-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @keyframes pager-fill {
   from {
     transform: scaleX(0);
   }
   to {
     transform: scaleX(1);
+  }
+}
+
+/*
+ * Hero "slash cut". The incoming slide animates its own diagonal clip, and the blade animates
+ * its own transform with the same timing, so nothing depends on an inherited animated value
+ * (which some GPU-composited browsers stop repainting after the first run). Both restart on
+ * every change because each new slide gains .hero-incoming and the blade is re-mounted.
+ * --slant is how far (in % of width) the bottom of the edge trails the top.
+ */
+.hero-cut {
+  --slant: 12%;
+  /* atan(12% × 1825 / 847): the edge's angle on the 1825×847 desktop hero. */
+  --blade-skew: -14.5deg;
+  --cut-ease: cubic-bezier(0.77, 0, 0.18, 1);
+}
+
+@media (width < 64rem) {
+  .hero-cut {
+    --slant: 30%;
+    --blade-skew: -9.5deg;
+  }
+}
+
+.hero-cut .hero-incoming {
+  animation: hero-wipe 1000ms var(--cut-ease) both;
+}
+
+@keyframes hero-wipe {
+  from {
+    clip-path: polygon(118% 0, 140% 0, 140% 100%, calc(118% - var(--slant)) 100%);
+  }
+  to {
+    clip-path: polygon(-20% 0, 140% 0, 140% 100%, calc(-20% - var(--slant)) 100%);
+  }
+}
+
+.hero-cut .hero-incoming > img {
+  animation: hero-impact 1400ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes hero-impact {
+  0% {
+    transform: scale(1.14) translateX(3%);
+    filter: brightness(1.7) contrast(1.15) saturate(1.3);
+  }
+  35% {
+    filter: brightness(1.15) contrast(1.05) saturate(1.1);
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+
+.hero-cut .hero-outgoing > img {
+  animation: hero-recede 1000ms cubic-bezier(0.77, 0, 0.18, 1) both;
+}
+
+@keyframes hero-recede {
+  to {
+    transform: scale(1.06) translateX(-2%);
+    filter: brightness(0.45) saturate(0.7);
+  }
+}
+
+/*
+ * Blade: a skewed lime/white streak whose centre tracks the wipe edge's midpoint.
+ * It is 7% of the hero wide, so travelling 118% → -20% of the hero is 1685.7% → -285.7% of itself.
+ */
+.hero-blade {
+  position: absolute;
+  inset-block: -5%;
+  width: 7%;
+  left: calc(var(--slant) / -2 - 3.5%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(201 255 4 / 0.25) 30%,
+    #c9ff04 46%,
+    #fff 50%,
+    #c9ff04 54%,
+    rgb(201 255 4 / 0.25) 70%,
+    transparent
+  );
+  filter: drop-shadow(0 0 18px rgb(201 255 4 / 0.8));
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: hero-blade 1000ms var(--cut-ease) both;
+}
+
+@keyframes hero-blade {
+  from {
+    transform: translateX(1685.7%) skewX(var(--blade-skew));
+  }
+  to {
+    transform: translateX(-285.7%) skewX(var(--blade-skew));
+  }
+}
+
+/* Copy re-enters in a stagger once the cut has mostly landed. */
+.hero-rise {
+  animation: hero-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(450ms + var(--i, 0) * 70ms);
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translate(-28px, 10px) skewX(-8deg);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
   }
 }
 
