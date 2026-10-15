@@ -1,8 +1,9 @@
 "use client";
 
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 import { useState, type CSSProperties } from "react";
 import { designSizes } from "@/lib/sizes";
+import { LANDING_PICKS, type Pick } from "@/lib/picks";
 import crown from "@/assets/icons/icon-recommends.svg";
 import pickIcon from "@/assets/icons/icon-editors-pick.svg";
 import cc from "@/assets/icons/icon-cc.svg";
@@ -10,82 +11,6 @@ import star from "@/assets/icons/icon-star.svg";
 import playNow from "@/assets/icons/reco-play-now.svg";
 import detailsLabel from "@/assets/icons/reco-details-label.svg";
 import plus from "@/assets/icons/reco-plus.svg";
-import chainsaw from "@/assets/img/hero-chainsaw-man.jpg";
-import tokyoRev from "@/assets/img/release-tokyorev-bg.png";
-import wotakoi from "@/assets/img/carousel-center-wotakoi.png";
-import apothecary from "@/assets/img/release-apothecary-bg.png";
-import jjk from "@/assets/img/popular-jjk.png";
-
-type Pick = {
-  title: string;
-  synopsis: string;
-  episodes: number;
-  status: string;
-  score: string;
-  genres: string[];
-  img: StaticImageData;
-  position: string;
-};
-
-const PICKS: Pick[] = [
-  {
-    title: "Chainsaw Man",
-    synopsis:
-      "Denji is a teenage boy living with a Chainsaw Devil named Pochita. Due to the debt his father left behind, he has been living a rock-bottom life while repaying his debt by harvesting devil corpses with Pochita. One day, Denji is betrayed and killed — and Pochita merges with his body to bring him back as Chainsaw Man....",
-    episodes: 12,
-    status: "Finished",
-    score: "87%",
-    genres: ["Action", "Horror", "Supernatural"],
-    img: chainsaw,
-    position: "50% 25%",
-  },
-  {
-    title: "Tokyo Revengers",
-    synopsis:
-      "Takemichi Hanagaki learns that his middle-school girlfriend was killed by the Tokyo Manji Gang. Pushed in front of a train, he wakes up twelve years in the past — and gets one chance to change everything....",
-    episodes: 24,
-    status: "Finished",
-    score: "84%",
-    genres: ["Action", "Drama", "Time Travel"],
-    img: tokyoRev,
-    position: "50% 35%",
-  },
-  {
-    title: "Wotakoi: Love is Hard for Otaku",
-    synopsis:
-      "Having slept through all four of her alarms, the energetic Narumi Momose finds herself running late for her first day of work at a new office. As she races to catch her train, she makes a promise to herself that none of her coworkers will find out about her dark secret: that she is an otaku and a fujoshi. Her plan goes instantly awry, though, when she runs into Hirotaka Nifuji, an old friend from middle school....",
-    episodes: 12,
-    status: "Finished",
-    score: "78%",
-    genres: ["Slice of Life", "Romance", "Comedy"],
-    img: wotakoi,
-    position: "50% 39%",
-  },
-  {
-    title: "The Apothecary Diaries",
-    synopsis:
-      "Maomao lived a peaceful life with her apothecary father until she was sold as a lowly servant to the emperor's palace. But she wasn't meant for a compliant life among royalty, and when the emperor's heirs fall ill she decides to step in and find a cure....",
-    episodes: 24,
-    status: "Airing",
-    score: "93%",
-    genres: ["Mystery", "Drama", "Historical"],
-    img: apothecary,
-    position: "50% 35%",
-  },
-  {
-    title: "Jujutsu Kaisen",
-    synopsis:
-      "Yuji Itadori is an unnaturally strong high schooler who spends his days at the Occult Club. When a cursed talisman is unsealed at school, he swallows a finger of Ryomen Sukuna, the King of Curses, to save his friends — and is pulled into the world of jujutsu sorcerers....",
-    episodes: 47,
-    status: "Finished",
-    score: "86%",
-    genres: ["Action", "Supernatural", "Shounen"],
-    img: jjk,
-    position: "50% 22%",
-  },
-];
-
-const START = 2; // Wotakoi sits in the centre, as in the Figma frame.
 
 /*
  * Slot geometry, tuned against the Figma composition (group 1799×448, centre card 799×448 at x500;
@@ -101,30 +26,40 @@ const SLOTS: Record<number, { x: number; scale: number; rotate: number; z: numbe
   [2]: { x: 74, scale: 0.72, rotate: -56, z: 10, dim: 0.3 },
 };
 
-const n = PICKS.length;
-/** Position of card `i` relative to the centred card, in −2…2. */
-const slotOf = (i: number, center: number) => ((i - center + n + 2) % n) - 2;
+/** Position of card `i` relative to the centred card, in −2…2 (the track holds five cards). */
+const slotOf = (i: number, center: number, n: number) => ((i - center + n + 2) % n) - 2;
 
 const EASE = "cubic-bezier(0.22, 0.8, 0.2, 1)";
 
 const glass = "flex h-30 items-center rounded-full bg-[rgba(44,44,44,0.52)] font-inter fs-13 font-bold backdrop-blur-[5px]";
 
-export default function Coverflow() {
+type Props = {
+  /** Exactly five picks — one per slot. */
+  picks?: Pick[];
+  /** Index of the card that starts in the centre (Wotakoi on the landing page, as in Figma). */
+  start?: number;
+  /** Spacing between the heading and the track (the Details frame uses a wider gap). */
+  trackClassName?: string;
+  className?: string;
+};
+
+export default function Coverflow({ picks = LANDING_PICKS, start = 2, trackClassName = "mt-30", className = "mt-50" }: Props) {
+  const n = picks.length;
   // `prev` lets the card that wraps from one end to the other jump instead of sweeping across.
-  const [{ index, prev }, setState] = useState({ index: START, prev: START });
+  const [{ index, prev }, setState] = useState({ index: start, prev: start });
   const go = (to: number) => setState((s) => ({ index: (to + n) % n, prev: s.index }));
   const step = (d: number) => go(index + d);
-  const pick = PICKS[index];
+  const pick = picks[index];
 
   return (
-    <section aria-labelledby="reco-heading" aria-roledescription="carousel" className="mt-121 pb-120 max-lg:mt-56 max-lg:pb-64">
+    <section aria-labelledby="reco-heading" aria-roledescription="carousel" className={`${className} max-lg:mt-56`}>
       <h2 id="reco-heading" className="flex items-center justify-center gap-10 fs-20 font-bold max-lg:text-[18px]">
         <Image src={crown} alt="" className="size-20" />
         Kuro Recommends
       </h2>
 
       <div
-        className="mt-89 overflow-hidden max-lg:-mx-16 max-lg:mt-24"
+        className={`${trackClassName} overflow-hidden max-lg:-mx-16 max-lg:mt-24`}
         onKeyDown={(e) => {
           if (e.key === "ArrowLeft") step(-1);
           if (e.key === "ArrowRight") step(1);
@@ -134,10 +69,10 @@ export default function Coverflow() {
           className="relative mx-auto aspect-[1799/448] w-1799 max-lg:left-1/2 max-lg:w-[220%] max-lg:-translate-x-1/2"
           style={{ perspective: "calc(2000 * var(--spacing))" }}
         >
-          {PICKS.map((p, i) => {
-            const slot = slotOf(i, index);
+          {picks.map((p, i) => {
+            const slot = slotOf(i, index, n);
             const s = SLOTS[slot];
-            const wrapped = Math.abs(slot - slotOf(i, prev)) > 1;
+            const wrapped = Math.abs(slot - slotOf(i, prev, n)) > 1;
             const active = slot === 0;
             const motion = wrapped ? "none" : `transform 800ms ${EASE}, opacity 800ms ${EASE}`;
             const style: CSSProperties = {
