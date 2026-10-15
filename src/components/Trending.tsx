@@ -107,7 +107,7 @@ export default function Trending() {
       <div className="relative -mr-45 -mt-4 max-lg:-mr-16">
         <ol
           ref={rail}
-          className="scrollbar-none flex snap-x snap-mandatory scroll-pl-33 gap-51 overflow-x-auto overscroll-x-contain pb-4 pl-33 pr-123 pt-52 max-lg:gap-32 max-lg:scroll-pl-24 max-lg:pl-24 max-lg:pr-60 max-lg:pt-40"
+          className="scrollbar-none flex snap-x snap-mandatory scroll-pl-33 gap-51 overflow-x-auto overscroll-x-contain pb-4 pl-33 pr-83 pt-52 max-lg:gap-32 max-lg:scroll-pl-24 max-lg:pl-24 max-lg:pr-40 max-lg:pt-40"
         >
           {ITEMS.map((item, i) => (
             <li key={item.title} className="relative h-369 w-271 shrink-0 snap-start max-lg:h-262 max-lg:w-192">
@@ -182,13 +182,23 @@ export default function Trending() {
             <Image src={nextArrow} alt="" className="size-full -scale-x-100" />
           </button>
         )}
+        {/* The rail ends 83 from the frame edge, mirroring its 83 start. At the end there's nothing left to
+            reveal, so the fade would only shade card 10 — show just the chevron (wraps to the start). */}
         <button
           type="button"
           onClick={() => page(1)}
           aria-label={edges.end ? "Back to the first trending titles" : "Next trending titles"}
-          className="absolute right-0 top-52 h-369 w-123 transition-opacity hover:opacity-90 max-lg:top-40 max-lg:h-262 max-lg:w-60"
+          className={`absolute right-0 top-52 h-369 transition-opacity hover:opacity-90 max-lg:top-40 max-lg:h-262 max-lg:w-40 ${
+            edges.end ? "grid w-83 place-items-center" : "w-123 max-lg:w-60"
+          }`}
         >
-          <Image src={nextArrow} alt="" className="size-full" />
+          {edges.end ? (
+            <svg viewBox="-1.5 -1.5 7.6 11.9" className="h-12 w-6" aria-hidden>
+              <path d="M0 0l4.6 4.4L0 8.9" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+          ) : (
+            <Image src={nextArrow} alt="" className="size-full" />
+          )}
         </button>
       </div>
     </section>
